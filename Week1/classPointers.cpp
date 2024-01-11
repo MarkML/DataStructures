@@ -17,37 +17,27 @@ using namespace std;
 
 class Student {
 public:
-    // Define the Student class with name, age, and grade as attributes
     string name;
     int age;
     double grade;
 
-    // Constructor to initialize the attributes
     Student(string n, int a, double g) : name(n), age(a), grade(g) {}
 
-    // Function to display student information
     void displayInfo() {
         cout << "Name: " << name << ", Age: " << age << ", Grade: " << grade << endl;
     }
 };
 
 int main() {
-    // Declare an array of Student objects on the stack
+    // Declare and initialize an array of Student objects
     const int numStudents = 3;
-    Student students[numStudents];
+    Student students[numStudents] = {
+        {"Bill", 20, 85.5},
+        {"Ted", 21, 92.0},
+        {"Mary", 19, 78.5}
+    };
 
-    // Prompt the user to enter information for each student
-    for (int i = 0; i < numStudents; i++) {
-        cout << "Enter information for Student " << i + 1 << ":" << endl;
-        cout << "Name: ";
-        cin >> students[i].name;
-        cout << "Age: ";
-        cin >> students[i].age;
-        cout << "Grade: ";
-        cin >> students[i].grade;
-    }
-
-    // Use pointers to display the student information
+    // Display student information
     cout << "\nStudent Information:" << endl;
     for (int i = 0; i < numStudents; i++) {
         cout << "Student " << i + 1 << " - ";
@@ -64,4 +54,3 @@ int main() {
 
     return 0;
 }
-
