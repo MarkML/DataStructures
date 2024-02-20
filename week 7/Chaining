@@ -1,0 +1,120 @@
+// Hash table with collision handling using chaining technique
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class HashTable {
+private:
+    // Define the structure for a linked list node
+    class Node {
+    public:
+        int key;
+        int data;
+        Node* next;
+
+        // Constructor for Node
+        Node(int key, int data) : key(key), data(data), next(nullptr) {}
+    };
+
+    vector<Node*> table; // Vector to store the buckets
+    int size; // Size of the hash table
+
+    // Very simple hash function: just return the key modulo the table size
+    int Hash(int key) {
+        return key % size;
+    }
+
+public:
+    // Constructor to initialize the hash table with a given size
+    HashTable(int tableSize) : size(tableSize) {
+        table.resize(size, nullptr); // Initialize each bucket to nullptr
+    }
+
+    // Destructor to deallocate memory
+    ~HashTable() {
+        // Iterate through each bucket and delete the linked list nodes
+        for (int i = 0; i < size; ++i) {
+            Node* current = table[i];
+            while (current != nullptr) {
+                Node* next = current->next;
+                delete current;
+                current = next;
+            }
+        }
+    }
+
+    // Function to insert an item into the hash table
+    void HashInsert(int key, int data) {
+        // Calculate the bucket index using the hash function
+        int bucketIndex = Hash(key);
+
+        // Allocate memory for a new linked list node
+        Node* newNode = new Node(key, data);
+
+        // Insert the new node at the beginning of the bucket list
+        newNode->next = table[bucketIndex];
+        table[bucketIndex] = newNode;
+    }
+
+    // Function to search for an item in the hash table
+    int HashSearch(int key) {
+        // Calculate the bucket index using the hash function
+        int bucketIndex = Hash(key);
+
+        // Access the bucket list at the calculated index
+        Node* current = table[bucketIndex];
+
+        // Search for the item in the bucket list
+        while (current != nullptr) {
+            if (current->key == key) {
+                return current->data; // If found, return its data
+            }
+            current = current->next;
+        }
+
+        return -1; // Return -1 if item is not found (assuming -1 represents null)
+    }
+};
+
+int main() {
+    // Example usage of the hash table
+    HashTable table(5); // Create a hash table with size 5
+
+    // Insert some items into the hash table
+    table.HashInsert(5, 100);
+    table.HashInsert(10, 200);
+    table.HashInsert(15, 300);
+    table.HashInsert(20, 400);
+    table.HashInsert(25, 500); // This will cause a collision with key 5
+
+    // Search for an item in the hash table
+    int searchData1 = table.HashSearch(10);
+    int searchData2 = table.HashSearch(25); // Searching for the collided key
+    int searchData3 = table.HashSearch(5);
+    // Output the search results
+    if (searchData1 != -1) {
+        cout << "Data found for key 10: " << searchData1 << endl;
+    } else {
+        cout << "Data not found for key 10." << endl;
+    }
+
+    if (searchData2 != -1) {
+        cout << "Data found for key 25: " << searchData2 << endl;
+    } else {
+        cout << "Data not found for key 25." << endl;
+    }
+
+    if (searchData3 != -1) {
+        cout << "Data found for key 15: " << searchData3 << endl;
+    } else {
+        cout << "Data not found for key 15." << endl;
+    }
+    return 0;
+}
+/*
+
+in Bucket 0:
+   -> [Key: 25, Data: 500] -> [Key: 20, Data: 400] -> [Key: 15, Data: 300] -> [Key: 10, Data: 200] -> [Key: 5, Data: 100] -> nullptr
+
+*/
