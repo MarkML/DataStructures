@@ -1,0 +1,49 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class HashTable {
+private:
+    vector<int> table; // Vector to store the hash table
+    int size; // Size of the hash table
+
+    // Very simple hash function: just return the key modulo the table size
+    int Hash(int key) {
+        return key % size;
+    }
+
+public:
+    // Constructor to initialize the hash table with a given size
+    HashTable(int tableSize) : size(tableSize) {
+        table.resize(size, -1); // Initialize each bucket to -1 (indicating empty)
+    }
+
+    // Function to insert an item into the hash table
+    void HashInsert(int key) {
+        // Calculate the bucket index using the hash function
+        int bucketIndex = Hash(key);
+
+        // If the bucket is empty, insert the key
+        if (table[bucketIndex] == -1) {
+            table[bucketIndex] = key;
+        } else {
+            // Collision occurred, print a message
+            cout << "Collision occurred for key " << key << " at bucket " << bucketIndex << endl;
+        }
+    }
+};
+
+int main() {
+    // Example usage of the hash table
+    HashTable table(5); // Create a hash table with size 5
+
+    // Insert some keys into the hash table
+    table.HashInsert(5);
+    table.HashInsert(10);
+    table.HashInsert(15);
+    table.HashInsert(20);
+    table.HashInsert(25); // This will cause a collision with key 5
+
+    return 0;
+}
