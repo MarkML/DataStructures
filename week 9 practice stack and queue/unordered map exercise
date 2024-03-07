@@ -1,0 +1,29 @@
+#include <iostream>
+//include your unordered map library
+#include <string>
+#include <cctype> // for std::tolower
+
+using namespace std;
+
+int main() {
+    // create your own Input string
+    
+
+    //create unordered map
+   
+
+    // Process each character in the input string
+
+        // Remove punctuation marks and convert to lowercase
+            // Keep alphabets and single quotes
+             // Convert to lowercase
+             // Increment the frequency of the cleaned character
+        
+    
+
+    // Display character frequencies
+    cout << "Character Frequency:\n";
+    
+
+    return 0;
+}
