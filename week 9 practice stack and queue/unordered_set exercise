@@ -5,10 +5,10 @@
 using namespace std;
 
 int main() {
-    // Step 1: Define an unordered set to store unique book ISBNs
+    Define an unordered set to store unique book ISBNs
     
 
-    // Step 2: Prompt the user to enter book ISBNs until they enter "done" 
+    Prompt the user to enter book ISBNs until they enter "done" 
     cout << "Enter book ISBNs (type 'done' to finish):\n";
     
     // use a loop to collect ISBN numbers
@@ -27,9 +27,9 @@ int main() {
         // Provide feedback to the user based on insertion result
         
 
-    // Step 7: Display the unique book ISBNs entered by the user using a loop
+    // Display the unique book ISBNs entered by the user using a loop
     
 
-    // Step 8: End the program
+    // End the program
     return 0;
 }
