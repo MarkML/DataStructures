@@ -1,0 +1,64 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class PriorityQueue {
+private:
+    vector<int> heapArray; // Vector to store elements of the priority queue
+
+    // Helper function to percolate up an element to its correct position in the max-heap
+    void MaxHeapPercolateUp(int nodeIndex);
+
+    // Helper function to percolate down an element to its correct position in the max-heap
+    void MaxHeapPercolateDown(int nodeIndex, int arraySize);
+
+public:
+    // Function to insert a new element into the priority queue
+    void Enqueue(int value);
+
+    // Function to remove and return the element with the highest priority (root of the max-heap)
+    int Dequeue();
+
+    // Function to return the value of the element with the highest priority (root of the max-heap) without removing it
+    int Peek();
+
+    // Function to check if the priority queue is empty
+    bool IsEmpty();
+
+    // Function to return the number of elements (nodes) in the priority queue
+    int GetLength();
+};
+
+// Implement the function to percolate up an element to its correct position in the max-heap
+void PriorityQueue::MaxHeapPercolateUp(int nodeIndex) {
+    // Instructions: Implement the percolate-up operation to ensure that the heap property is maintained.
+    //                Start at the given node index and continue swapping the node with its parent until
+    //                the heap property is satisfied or until the root node is reached.
+}
+
+// Implement the function to percolate down an element to its correct position in the max-heap
+void PriorityQueue::MaxHeapPercolateDown(int nodeIndex, int arraySize) {
+    // Instructions: Implement the percolate-down operation to ensure that the heap property is maintained.
+    //                Start at the given node index and continue swapping the node with its maximum child
+    //                until the heap property is satisfied or until the node has no children.
+}
+
+int main() {
+    // Instructions: Create an instance of the PriorityQueue class.
+    //               Use this instance to enqueue, dequeue, and perform other operations on the priority queue.
+
+    // Instructions: Choose or create a scenario where a priority queue can be applied.
+    //               Examples include managing tasks in a to-do list, scheduling jobs based on priority, etc.
+    //               Define the scenario and the elements (tasks, jobs, etc.) that will be prioritized.
+
+    // Instructions: Enqueue elements (tasks, jobs, etc.) with their priorities into the priority queue.
+
+    // Instructions: Perform operations on the priority queue, such as dequeuing elements, peeking at the
+    //               next element to be dequeued, checking if the priority queue is empty, and getting the
+    //               total number of elements in the priority queue.
+
+    // Instructions: Test the priority queue implementation with different scenarios and verify that it behaves as expected.
+
+    return 0;
+}
