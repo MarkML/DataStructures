@@ -1,0 +1,165 @@
+//Psuedo-code for BST AVL Trees
+
+// Define a node structure for the BST
+class Node {
+    key
+    left_child
+    right_child
+    height
+}
+
+// Initialize an empty AVL tree
+AVL_Tree = NULL
+
+// Function to search for a key in the AVL tree
+function search(node, key):
+    // Base case: if the node is NULL or if the key is found
+    if node is NULL or node.key is equal to key:
+        return node
+    else if key is less than node.key:
+        // If the key is less than the current node's key, search in the left subtree
+        return search(node.left_child, key)
+    else:
+        // If the key is greater than the current node's key, search in the right subtree
+        return search(node.right_child, key)
+
+// Function to calculate the height of a node
+function height(node):
+    // If the node is NULL, its height is 0; otherwise, return the height stored in the node
+    if node is NULL:
+        return 0
+    else:
+        return node.height
+
+// Function to update the height of a node
+function update_height(node):
+    // Update the height of a node based on the heights of its children
+    node.height = 1 + max(height(node.left_child), height(node.right_child))
+
+// Function to perform a right rotation on a subtree rooted at x
+function right_rotate(x):
+    // Perform a right rotation to balance the tree
+    y = x.left_child
+    z = y.right_child
+
+    // Perform rotation
+    y.right_child = x
+    x.left_child = z
+
+    // Update heights after rotation
+    update_height(x)
+    update_height(y)
+
+    return y
+
+// Function to perform a left rotation on a subtree rooted at y
+function left_rotate(y):
+    // Perform a left rotation to balance the tree
+    x = y.right_child
+    z = x.left_child
+
+    // Perform rotation
+    x.left_child = y
+    y.right_child = z
+
+    // Update heights after rotation
+    update_height(y)
+    update_height(x)
+
+    return x
+
+// Function to balance the AVL tree after insertion or deletion
+function balance(node):
+    // Calculate the balance factor of a node
+    if node is NULL:
+        return 0
+    else:
+        return height(node.left_child) - height(node.right_child)
+
+// Function to insert a key into the AVL tree
+function insert(node, key):
+    // Base case: if the node is NULL, create a new node with the given key
+    if node is NULL:
+        return create_node(key)
+    else if key is less than node.key:
+        // If the key is less than the current node's key, insert into the left subtree
+        node.left_child = insert(node.left_child, key)
+    else:
+        // If the key is greater than the current node's key, insert into the right subtree
+        node.right_child = insert(node.right_child, key)
+
+    // Update height of the current node
+    update_height(node)
+
+    // Check balance factor and perform rotations if necessary
+    balance_factor = balance(node)
+    if balance_factor > 1 and key < node.left_child.key:
+        return right_rotate(node)
+    else if balance_factor < -1 and key > node.right_child.key:
+        return left_rotate(node)
+    else if balance_factor > 1 and key > node.left_child.key:
+        node.left_child = left_rotate(node.left_child)
+        return right_rotate(node)
+    else if balance_factor < -1 and key < node.right_child.key:
+        node.right_child = right_rotate(node.right_child)
+        return left_rotate(node)
+
+    return node
+
+// Function to find the node with minimum key value in a tree
+function find_min_node(node):
+    // Traverse the left subtree to find the minimum node
+    current = node
+    while current.left_child is not NULL:
+        current = current.left_child
+    return current
+
+// Function to delete a key from the AVL tree
+function delete_node(node, key):
+    // Base case: if the node is NULL, return NULL
+    if node is NULL:
+        return node
+    else if key < node.key:
+        // If the key is less than the current node's key, delete from the left subtree
+        node.left_child = delete_node(node.left_child, key)
+    else if key > node.key:
+        // If the key is greater than the current node's key, delete from the right subtree
+        node.right_child = delete_node(node.right_child, key)
+    else:
+        // Node with only one child or no child
+        if node.left_child is NULL or node.right_child is NULL:
+            temp = node.left_child if node.left_child else node.right_child
+            if temp is NULL:
+                temp = node
+                node = NULL
+            else:
+                node = temp // Copy the contents of the non-empty child
+
+        // Node with two children
+        else:
+            // Find the inorder successor and replace the node's key with it
+            temp = find_min_node(node.right_child)
+            node.key = temp.key
+            node.right_child = delete_node(node.right_child, temp.key)
+
+    // If the tree had only one node then return
+    if node is NULL:
+        return node
+
+    // Update height of the current node
+    update_height(node)
+
+    // Check balance factor and perform rotations if necessary
+    balance_factor = balance(node)
+    if balance_factor > 1 and balance(node.left_child) >= 0:
+        return right_rotate(node)
+    else if balance_factor > 1 and balance(node.left_child) < 0:
+        node.left_child = left_rotate(node.left_child)
+        return right_rotate(node)
+    else if balance_factor < -1 and balance(node.right_child) <= 0:
+        return left_rotate(node)
+    else if balance_factor < -1 and balance(node.right_child) > 0:
+        node.right_child = right_rotate(node.right_child)
+        return left_rotate(node)
+
+    return node
