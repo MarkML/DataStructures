@@ -1,0 +1,98 @@
+//min-heap
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class MinHeap {
+private:
+    vector<int> heapArray;
+
+    void MinHeapPercolateUp(int nodeIndex) {
+        while (nodeIndex > 0) {
+            int parentIndex = (nodeIndex - 1) / 2;
+            if (heapArray[nodeIndex] >= heapArray[parentIndex])
+                return;
+            else {
+                swap(heapArray[nodeIndex], heapArray[parentIndex]);
+                nodeIndex = parentIndex;
+            }
+        }
+    }
+
+    void MinHeapPercolateDown(int nodeIndex, int arraySize) {
+        int childIndex = 2 * nodeIndex + 1;
+        int value = heapArray[nodeIndex];
+
+        while (childIndex < arraySize) {
+            // Find the min among the node and all the node's children
+            int minValue = value;
+            int minIndex = -1;
+            for (int i = 0; i < 2 && i + childIndex < arraySize; i++) {
+                if (heapArray[i + childIndex] < minValue) {
+                    minValue = heapArray[i + childIndex];
+                    minIndex = i + childIndex;
+                }
+            }
+
+            if (minValue == value) {
+                return;
+            }
+            else {
+                swap(heapArray[nodeIndex], heapArray[minIndex]);
+                nodeIndex = minIndex;
+                childIndex = 2 * nodeIndex + 1;
+            }
+        }
+    }
+
+public:
+    void insert(int value) {
+        heapArray.push_back(value);
+        MinHeapPercolateUp(heapArray.size() - 1);
+    }
+
+    int extractMin() {
+        if (heapArray.empty()) {
+            cout << "Heap is empty!" << endl;
+            return -1;
+        }
+
+        int minVal = heapArray[0];
+        swap(heapArray[0], heapArray.back());
+        heapArray.pop_back();
+        MinHeapPercolateDown(0, heapArray.size());
+        return minVal;
+    }
+
+    void printHeap() {
+        for (int val : heapArray) {
+            cout << val << " ";
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    MinHeap minHeap;
+
+    minHeap.insert(10);
+    minHeap.insert(20);
+    minHeap.insert(15);
+    minHeap.insert(30);
+    minHeap.insert(25);
+    minHeap.insert(50);
+    minHeap.insert(40);
+    minHeap.insert(45);
+
+    minHeap.printHeap(); // Should print: 10 20 15 30 25 50 40 45
+
+    int extractedMin = minHeap.extractMin();
+    cout << "Extracted Min Value: " << extractedMin << endl; // Should print: 10
+
+    minHeap.printHeap(); // Should print: 15 20 40 30 25 50 45
+
+    return 0;
+}
+
