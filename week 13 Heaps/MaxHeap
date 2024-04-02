@@ -1,0 +1,98 @@
+// Max-Heap
+
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class MaxHeap {
+private:
+    vector<int> heapArray;
+
+    void MaxHeapPercolateUp(int nodeIndex) {
+        while (nodeIndex > 0) {
+            int parentIndex = (nodeIndex - 1) / 2;
+            if (heapArray[nodeIndex] <= heapArray[parentIndex])
+                return;
+            else {
+                swap(heapArray[nodeIndex], heapArray[parentIndex]);
+                nodeIndex = parentIndex;
+            }
+        }
+    }
+
+    void MaxHeapPercolateDown(int nodeIndex, int arraySize) {
+        int childIndex = 2 * nodeIndex + 1;
+        int value = heapArray[nodeIndex];
+
+        while (childIndex < arraySize) {
+            // Find the max among the node and all the node's children
+            int maxValue = value;
+            int maxIndex = -1;
+            for (int i = 0; i < 2 && i + childIndex < arraySize; i++) {
+                if (heapArray[i + childIndex] > maxValue) {
+                    maxValue = heapArray[i + childIndex];
+                    maxIndex = i + childIndex;
+                }
+            }
+
+            if (maxValue == value) {
+                return;
+            }
+            else {
+                swap(heapArray[nodeIndex], heapArray[maxIndex]);
+                nodeIndex = maxIndex;
+                childIndex = 2 * nodeIndex + 1;
+            }
+        }
+    }
+
+public:
+    void insert(int value) {
+        heapArray.push_back(value);
+        MaxHeapPercolateUp(heapArray.size() - 1);
+    }
+
+    int extractMax() {
+        if (heapArray.empty()) {
+            cout << "Heap is empty!" << endl;
+            return -1;
+        }
+
+        int maxVal = heapArray[0];
+        swap(heapArray[0], heapArray.back());
+        heapArray.pop_back();
+        MaxHeapPercolateDown(0, heapArray.size());
+        return maxVal;
+    }
+
+    void printHeap() {
+        for (int val : heapArray) {
+            cout << val << " ";
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    MaxHeap maxHeap;
+
+    maxHeap.insert(50);
+    maxHeap.insert(30);
+    maxHeap.insert(40);
+    maxHeap.insert(45);
+    maxHeap.insert(25);
+    maxHeap.insert(15);
+    maxHeap.insert(10);
+    maxHeap.insert(20);
+
+    maxHeap.printHeap(); // Should print: 50 45 40 30 25 15 10 20
+
+    int extractedMax = maxHeap.extractMax();
+    cout << "Extracted Max Value: " << extractedMax << endl; // Should print: 50
+
+    maxHeap.printHeap(); // Should print: 45 30 40 20 25 15 10
+
+    return 0;
+}
+
