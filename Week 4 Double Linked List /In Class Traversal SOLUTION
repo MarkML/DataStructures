@@ -1,0 +1,84 @@
+#include <iostream>
+
+using namespace std;
+
+// Node class for a Doubly Linked List
+class Player {
+public:
+    string name;
+    int score;
+    Player* next;
+    Player* prev;
+
+    // Constructor with list initialization
+    Player(string playerName, int playerScore) : name(playerName), score(playerScore), next(nullptr), prev(nullptr) {}
+};
+
+// Doubly Linked List class
+class Leaderboard {
+private:
+    Player* head;
+    Player* tail;
+
+public:
+    // Constructor with list initialization
+    Leaderboard() : head(nullptr), tail(nullptr) {}
+
+    // Function to insert a new player at the end
+    void insert(string name, int score) {
+        Player* newPlayer = new Player(name, score);
+        if (!head) {  // If the list is empty, new player becomes head and tail
+            head = tail = newPlayer;
+        } else {  // Otherwise, add to the end
+            tail->next = newPlayer;
+            newPlayer->prev = tail;
+            tail = newPlayer;
+        }
+    }
+
+    // Function to traverse and print the leaderboard from first to last place
+    void displayLeaderboardForward() const {
+        cout << "🏆 Adventure Game Leaderboard (Top to Bottom) 🏆\n";
+        Player* curPlayer = head;
+        int rank = 1;
+        while (curPlayer) {
+            cout << "Rank " << rank << ": " << curPlayer->name << " - " << curPlayer->score << " points\n";
+            curPlayer = curPlayer->next;
+            rank++;
+        }
+        cout << endl;
+    }
+
+    // Function to traverse and print the leaderboard from last to first place
+    void displayLeaderboardBackward() const {
+        cout << "🔄 Reverse Leaderboard (Bottom to Top) 🔄\n";
+        Player* curPlayer = tail;
+        int rank = 1;
+        while (curPlayer) {
+            cout << "Reverse Rank " << rank << ": " << curPlayer->name << " - " << curPlayer->score << " points\n";
+            curPlayer = curPlayer->prev;
+            rank++;
+        }
+        cout << endl;
+    }
+};
+
+// Main function
+int main() {
+    Leaderboard gameLeaderboard;
+
+    // Insert sample players with scores
+    gameLeaderboard.insert("ZeldaMaster99", 1050);
+    gameLeaderboard.insert("DragonSlayer77", 1200);
+    gameLeaderboard.insert("MageOfTime", 980);
+    gameLeaderboard.insert("RogueShadow", 1105);
+    gameLeaderboard.insert("DungeonExplorer", 1025);
+
+    // Display leaderboard (Forward)
+    gameLeaderboard.displayLeaderboardForward();
+
+    // Display leaderboard (Backward)
+    gameLeaderboard.displayLeaderboardBackward();
+
+    return 0;
+}
