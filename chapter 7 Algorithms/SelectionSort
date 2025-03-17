@@ -1,0 +1,45 @@
+#include <iostream>
+#include <vector>
+#include <ctime>
+
+using namespace std;
+
+void SelectionSort(vector<int>& numbers, int numberSize) {
+    for(int i = 0; i < numberSize-1; ++i) {
+        int indexSmallest = i;
+        for(int j = i + 1; j < numberSize; ++j) {
+            if(numbers[j] < numbers[indexSmallest]) {
+                indexSmallest = j;
+            }
+        }
+        int temp = numbers[i];
+        numbers[i] = numbers[indexSmallest];
+        numbers[indexSmallest] = temp;
+    }
+}
+
+int main() {
+    
+    vector<int> numbers = {};
+    //select random numbers to test the algorithms
+    srand(time(0));
+    for(int i = 0; i < 10; ++i) {
+        numbers.push_back(rand() % 100); // Random numbers between 0 and 99
+    }
+    //print the vector of random numbers unsorted
+    for(int i = 0; i < 10; ++i){
+        cout << numbers[i] << " ";
+    }
+    cout << endl;
+
+    int numberSize = numbers.size();
+    SelectionSort(numbers, numberSize);
+
+    //print the vector of sorted numbers
+    for(int i = 0; i < numberSize; ++i) {
+        cout << numbers[i] << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
