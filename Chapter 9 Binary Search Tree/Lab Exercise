@@ -1,0 +1,163 @@
+#include <iostream>
+using namespace std;
+
+// Node class representing a single node in the BST
+class TreeNode {
+public:
+    int key;
+    TreeNode* left;
+    TreeNode* right;
+
+    TreeNode(int value) {
+        key = value;
+        left = nullptr;
+        right = nullptr;
+    }
+};
+
+// Binary Search Tree class
+class BST {
+public:
+    TreeNode* root;
+
+    BST() {
+        root = nullptr;
+    }
+
+    void insert(int key);
+    TreeNode* search(int key);
+    bool remove(int key);
+    void printInOrder();
+
+private:
+    void insert(TreeNode*& node, int key);
+    TreeNode* search(TreeNode* node, int key);
+    TreeNode* remove(TreeNode* node, int key, bool& success);
+    void printInOrder(TreeNode* node);
+};
+
+// Insert function (public)
+void BST::insert(int key) {
+    insert(root, key);
+}
+
+// Insert helper (private)
+void BST::insert(TreeNode*& node, int key) {
+    if (node == nullptr) {
+        node = new TreeNode(key);
+    } else if (key < node->key) {
+        insert(node->left, key);
+    } else {
+        insert(node->right, key);
+    }
+}
+
+// Search function (public)
+TreeNode* BST::search(int key) {
+    return search(root, key);
+}
+
+// Search helper (private)
+TreeNode* BST::search(TreeNode* node, int key) {
+    while (node != nullptr) {
+        if (key == node->key)
+            return node;
+        else if (key < node->key)
+            node = node->left;
+        else
+            node = node->right;
+    }
+    return nullptr;
+}
+
+// Remove function (public)
+bool BST::remove(int key) {
+    bool success = false;
+    root = remove(root, key, success);
+    return success;
+}
+
+// Remove helper (private)
+TreeNode* BST::remove(TreeNode* node, int key, bool& success) {
+    if (node == nullptr) return nullptr;
+
+    if (key < node->key) {
+        node->left = remove(node->left, key, success);
+    } else if (key > node->key) {
+        node->right = remove(node->right, key, success);
+    } else {
+        success = true;
+        if (node->left == nullptr) {
+            TreeNode* temp = node->right;
+            delete node;
+            return temp;
+        } else if (node->right == nullptr) {
+            TreeNode* temp = node->left;
+            delete node;
+            return temp;
+        } else {
+            TreeNode* succ = node->right;
+            while (succ->left != nullptr) {
+                succ = succ->left;
+            }
+            node->key = succ->key;
+            node->right = remove(node->right, succ->key, success);
+        }
+    }
+    return node;
+}
+
+// In-order traversal (public)
+void BST::printInOrder() {
+    printInOrder(root);
+}
+
+// In-order traversal helper (private)
+void BST::printInOrder(TreeNode* node) {
+    if (node == nullptr) return;
+    printInOrder(node->left);
+    cout << node->key << " ";
+    printInOrder(node->right);
+}
+
+// Main driver program
+int main() {
+    BST tree;
+
+    tree.insert(50);
+    tree.insert(30);
+    tree.insert(70);
+    tree.insert(20);
+    tree.insert(40);
+    tree.insert(60);
+    tree.insert(80);
+
+    cout << "In-order Traversal: ";
+    tree.printInOrder();
+    cout << endl;
+
+    int target = 40;
+    if (tree.search(target)) {
+        cout << "Found " << target << " in the tree." << endl;
+    } else {
+        cout << target << " not found in the tree." << endl;
+    }
+
+    target = 90;
+    if (tree.search(target)) {
+        cout << "Found " << target << " in the tree." << endl;
+    } else {
+        cout << target << " not found in the tree." << endl;
+    }
+
+    tree.remove(20); // leaf
+    tree.remove(30); // one child
+    tree.remove(50); // two children
+
+    cout << "In-order Traversal after deletions: ";
+    tree.printInOrder();
+    cout << endl;
+
+    return 0;
+}
+
