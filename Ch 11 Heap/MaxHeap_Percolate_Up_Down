@@ -1,0 +1,108 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class MaxHeap {
+private:
+    vector<int> heapArray;
+
+    void MaxHeapPercolateUp(int nodeIndex) {
+        while (nodeIndex > 0) {
+            int parentIndex = (nodeIndex - 1) / 2;
+            if (heapArray[nodeIndex] <= heapArray[parentIndex])
+                return;
+            else {
+                swap(heapArray[nodeIndex], heapArray[parentIndex]);
+                nodeIndex = parentIndex;
+            }
+        }
+    }
+
+    // Function to restore the max-heap property by percolating a node down
+    // starting from nodeIndex. It assumes the rest of the heap is valid.
+    void MaxHeapPercolateDown(int nodeIndex, int arraySize) {
+      // Calculate the index of the left child using the heap formula: 2*i + 1
+      int childIndex = 2 * nodeIndex + 1;
+
+      // Get the value at the current node (the one we may need to move down)
+      int value = heapArray[nodeIndex];
+
+    // Loop until the current node has no children (i.e., it's a leaf)
+      while (childIndex < arraySize) {
+        // Start by assuming the current node is the largest
+        int maxValue = value;
+        int maxIndex = -1;
+
+        // Iterate over the two possible children: left and right
+        for (int i = 0; i < 2 && i + childIndex < arraySize; i++) {
+            // Compare each child with the current maxValue
+            if (heapArray[i + childIndex] > maxValue) {
+                // If the child is greater, update maxValue and remember its index
+                maxValue = heapArray[i + childIndex];
+                maxIndex = i + childIndex;
+            }
+        }
+
+        // If the current node is already the largest, the heap property holds
+        if (maxValue == value) {
+            return; // No further action needed; exit the function
+        } else {
+            // Otherwise, swap the current node with the larger child
+            swap(heapArray[nodeIndex], heapArray[maxIndex]);
+
+            // Move down to the child's position and repeat the process
+            nodeIndex = maxIndex;
+            childIndex = 2 * nodeIndex + 1;
+            }
+        }
+}
+
+public:
+    void insert(int value) {
+        heapArray.push_back(value);
+        MaxHeapPercolateUp(heapArray.size() - 1);
+    }
+
+    int extractMax() {
+        if (heapArray.empty()) {
+            cout << "Heap is empty!" << endl;
+            return -1;
+        }
+
+        int maxVal = heapArray[0];
+        swap(heapArray[0], heapArray.back());
+        heapArray.pop_back();
+        MaxHeapPercolateDown(0, heapArray.size());
+        return maxVal;
+    }
+
+    void printHeap() {
+        for (int val : heapArray) {
+            cout << val << " ";
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    MaxHeap maxHeap;
+
+    maxHeap.insert(50);
+    maxHeap.insert(30);
+    maxHeap.insert(40);
+    maxHeap.insert(45);
+    maxHeap.insert(25);
+    maxHeap.insert(15);
+    maxHeap.insert(10);
+    maxHeap.insert(20);
+
+    maxHeap.printHeap(); // Should print: 50 45 40 30 25 15 10 20
+
+    int extractedMax = maxHeap.extractMax();
+    cout << "Extracted Max Value: " << extractedMax << endl; // Should print: 50
+
+    maxHeap.printHeap(); // Should print: 45 30 40 20 25 15 10
+
+    return 0;
+}
