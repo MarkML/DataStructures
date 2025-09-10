@@ -1,0 +1,52 @@
+/******************************************************************************
+
+Polymorphism with virtual functions
+ 
+*******************************************************************************/
+#include <iostream>
+
+using namespace std;
+
+class Student {
+    public:
+        string name;
+        Student(string name) : name(name) {}
+        // keyword "virtual" makes it a virtual function
+        virtual void print() {
+            cout << name << endl;
+        }
+};
+
+//Derived class from base class Student
+class CoEStudent : public Student {
+    public:
+        string major;
+        CoEStudent(string name, string major) : Student(name), major(major) {}
+        void print() {
+            cout << name << ": " << major << endl;
+        }
+        
+};
+int main()
+{
+    Student bob("Bob");
+    Student dave("Dave");
+    Student jennifer("Jennifer");
+    CoEStudent john("John","computer science");
+    CoEStudent frank("Frank","software engineering");
+    CoEStudent mary("Mary", "ECE");
+    
+    Student* students[] = { &bob, &dave, &jennifer, &john, &frank, &mary};
+    
+    for (int i = 0; i < 6; i++) {
+        students[i]->print();
+        //the actual print() method executed is determined at runtime based on 
+        //the actual type of the object. This is known as dynamic or late binding.
+    }
+    
+    
+    
+
+    return 0;
+}
+
