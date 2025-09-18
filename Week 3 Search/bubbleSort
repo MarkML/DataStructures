@@ -1,0 +1,46 @@
+// bubbleSort sorting algorithm with early loop termination if list is already sorted
+
+#include <iostream>
+using namespace std;
+
+void swap(int* a, int* b);
+void bubbleSort(int array[], int size);
+
+int main(){
+    //create array of unsorted ints
+    int array[] = {9,2,5,8,3,1,10};
+    //calculate # of elements in array
+    int size = sizeof(array) / sizeof(array[0]);
+    bubbleSort(array, size);
+    //print sorted array
+    for(int i = 0; i < size; i++){
+        cout << array[i] << " "; 
+    }
+    return 0;
+}
+
+void swap(int* a, int* b){
+    int temp;
+    temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void bubbleSort(int array[], int size){
+   // check variable to short circuit the loop in case the list is sorted
+   bool swapped = false;
+   for(int i = size - 1; i > 0; i--){
+       for(int j = 0; j < i; j++){
+           if(array[j] > array[j+1]){   //compare 2 numbers
+                swap(&array[j], &array[j+1]);
+                swapped = true;
+            }
+       }
+        if(swapped != true){
+            break;
+        }
+       }
+       
+   }
+
+    
