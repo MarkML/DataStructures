@@ -1,0 +1,46 @@
+#include <iostream>
+using namespace std;
+
+
+void Swap(int* arr, int i, int j){
+    int temp = arr[i];
+    arr[i] =arr[j];
+    arr[j] = temp;
+}
+
+int Partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            Swap(arr, i, j);
+        }
+    }
+    Swap(arr, i + 1, high);
+    return i + 1;
+}
+
+void QuickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int p = Partition(arr, low, high);
+        QuickSort(arr, low, p - 1);
+        QuickSort(arr, p + 1, high);
+    }
+}
+
+int main() {
+    //int Arr[] = {13, 8, 6, 5, 63, 96, 5, 10};
+    //int Arr[] = { 47, 3, 15, 89, 22, 7, 61, 11};
+    int Arr[] = {47, 3, 15, 89, 22, 7, 61, 10};
+    int n = sizeof(Arr) / sizeof(Arr[0]);
+
+    QuickSort(Arr, 0, n - 1);
+
+    cout << "Sorted List\n";
+    for (int i = 0; i < n; i++) {
+        cout << Arr[i] << " ";
+    }
+    cout << endl;
+    return 0;
+}
