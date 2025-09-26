@@ -1,0 +1,75 @@
+//Radix sort 
+#include <iostream>
+#include <vector>
+using namespace std;
+
+//Before sorting, we need to know the maximum number of digits among all numbers to determine how many digit “passes” 
+//(ones place, tens place, hundreds place, …) to perform.
+// Returns the length, in number of digits, of an integer value
+int RadixGetLength(int value) {
+    if (value == 0) {   //case if input is 0, 
+        return 1;
+    }
+    int digits = 0;
+    while (value != 0) {
+        digits++;
+        value /= 10;      //123 -> 12 -> 1 -> 0. strip off 1 digit at a time
+    }
+    return digits;        //returns number of digits in the number i.e. digits in 3 for 123
+}
+
+// Returns the maximum length, in number of digits, out of all array elements
+int RadixGetMaxLength(const int* numbers, int numbersSize) {
+    int maxDigits = 0;
+    for (int i = 0; i < numbersSize; i++) {
+        int digitCount = RadixGetLength(numbers[i]); // call RadixGetLength()  to get the number of digits for the current element
+        if (digitCount > maxDigits) {
+            maxDigits = digitCount;
+        }
+    }
+    return maxDigits;  //after examinining every element, it returns the maximum digit length
+}
+
+//Radix Sort for positive integers
+void RadixSort(int* array, int arraySize) {
+    vector<vector<int>> buckets(10);          //vector wich each cell holding another vector.
+                                             // outer vector is 0-9, inner vector is initialy empty
+
+    int maxDigits = RadixGetMaxLength(array, arraySize);  //tells the algorithm how many passes to make
+    int pow10 = 1;
+
+    for (int digitIndex = 0; digitIndex < maxDigits; digitIndex++) {
+        // Place numbers into buckets by current digit
+        for (int i = 0; i < arraySize; i++) {
+            int bucketIndex = (array[i] / pow10) % 10;
+            buckets[bucketIndex].push_back(array[i]);
+        }
+
+        // Copy numbers back to orginal array of number from buckets in order before moving on to the next digit place
+        int copyBackIndex = 0;
+        for (int i = 0; i < 10; i++) {
+            for (size_t j = 0; j < buckets[i].size(); j++) {
+                array[copyBackIndex++] = buckets[i][j];
+            }
+            buckets[i].clear();
+        }
+        pow10 *= 10; // Next digit place
+    }
+}
+
+int main() {
+    int arr[] = {170, 45, 75, 90, 802, 24, 2, 66};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    cout << "Original array: ";
+    for (int i = 0; i < n; i++) cout << arr[i] << " ";
+    cout << "\n";
+
+    RadixSort(arr, n);
+
+    cout << "Sorted array:   ";
+    for (int i = 0; i < n; i++) cout << arr[i] << " ";
+    cout << "\n";
+
+    return 0;
+}
