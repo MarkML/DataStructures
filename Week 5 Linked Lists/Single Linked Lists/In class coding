@@ -1,0 +1,140 @@
+// In Class codig of single linked list
+
+#include <iostream>
+using namespace std;
+
+class Node {
+    public:
+        int data;
+        Node* next;
+        //constructor
+        Node(int value):data(value), next(nullptr) {}
+};
+
+class Linked_list {
+    private:
+        Node* head;
+        Node* tail;
+    public:
+        //we'll add our ADT functionality here
+        //constructor
+        Linked_list():head(nullptr), tail(nullptr) {}
+        
+        //destructor
+        ~Linked_list() {
+            Node* temp = head;
+            while(head != nullptr) {
+                head = head->next;
+                delete temp;
+                temp = head;
+            }
+        }
+        
+        //member function to prepend a Node
+        void prepend(int value){
+            Node* newNode = new Node(value);
+            if(head == nullptr){
+                //list is empty
+                head = newNode;
+                tail = newNode;
+            }
+            else
+            {
+                //list is not empty
+                newNode->next = head;
+                head = newNode;
+            
+            }
+        }
+         
+        //member function to print or display our linked list
+        void printList(){
+            Node* temp = head;
+            while (temp != nullptr){
+                cout << temp->data << " ";
+                temp = temp->next;
+            }
+            cout << endl;
+        }
+
+        
+        //member function to add value to end of list
+        void append(int value){
+            Node* newNode = new Node(value);
+            //check if list is empty
+            if(head == nullptr){
+                head = newNode;
+                tail = newNode;
+            }
+            else
+            {
+                tail->next = newNode;
+                tail = newNode;
+            }
+            
+        }
+        
+        //Search for a value in the list and return its address
+        Node* listSearch(int key) {
+            Node* curNode = head;
+            while(curNode != nullptr){
+                if(curNode->data == key){
+                    return curNode;
+                }
+                curNode = curNode->next;
+            }
+            return nullptr;
+        }
+        
+        //member function to insert a node after a given node in the list
+        void listInsertAfter(Node* curNode, Node* newNode){
+            //3 cases to insert
+            //1st case insert at beginning of list
+            if(head == nullptr){
+                head = newNode;
+                tail = newNode;
+            }
+            else if(curNode == tail)
+            {
+                tail->next = newNode;
+                tail = newNode;
+            }
+            else {
+                newNode->next = curNode->next;
+                curNode->next = newNode;
+            }
+        }
+        
+       
+        void listRemoveNodeAfter(Node* curNode){
+            if(curNode == nullptr){
+                Node* nodeToRemove = head; // remove the 1st node in the list
+                head = head->next;
+                delete nodeToRemove;
+            
+                if(head == nullptr){  // if the deleted node was last one, list is now empty, so update tail pointer
+                    tail = nullptr;
+                }
+            }
+            else if(curNode->next != nullptr){
+                Node* nodeToRemove = curNode->next;
+                Node* succeedingNode = nodeToRemove->next;
+                curNode->next = succeedingNode;
+                delete nodeToRemove;
+                
+                if(succeedingNode == nullptr){
+                    tail = curNode;
+                }
+            }
+        }
+            
+};      
+
+
+int main(){
+    Linked_list* myLinkedList = new Linked_list();
+    
+    //Write test cases here:
+     
+    return 0;
+}
