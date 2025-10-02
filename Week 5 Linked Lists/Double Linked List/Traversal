@@ -1,0 +1,21 @@
+// forward andreverse traversal thru the double linked list
+
+
+void Traverse() const {
+    DoublyLinkedNode* curNode = head; //start at head
+    
+    while (curNode != nullptr){
+        cout << curNode->data << " ";
+        curNode = curNode->next;
+    }
+}
+
+void TraverseReverse() const {
+   DoublyLinkedNode* curNode = tail; // Start at tail
+
+   while (curNode) {
+      cout << curNode->data << " ";
+      curNode = curNode->previous;
+   }
+}
+
