@@ -1,0 +1,159 @@
+#include <iostream>
+using namespace std;
+
+class SinglyLinkedNode {
+public:
+    int data;
+    SinglyLinkedNode* next;
+
+    // Constructor initializes node
+    SinglyLinkedNode(int val) : data(val), next(nullptr) {}      
+};
+
+
+class SinglyLinkedList {
+private:
+    SinglyLinkedNode* head;
+    SinglyLinkedNode* tail;
+
+    /*
+    Example: 10 → 20 → 30 → 40 → nullptr
+    TraverseRecursive(head):
+
+    Call 1: node = 10 → not nullptr → print 10, recurse on 20
+    Call 2: node = 20 → not nullptr → print 20, recurse on 30
+    Call 3: node = 30 → not nullptr → print 30, recurse on 40
+    Call 4: node = 40 → not nullptr → print 40, recurse on nullptr
+    Call 5: node = nullptr → base case hit → return immediately
+
+    Unwinding:
+    No more actions (all printing was done before recursion)
+
+    Output:
+    10 20 30 40
+    */
+    void TraverseRecursive(SinglyLinkedNode* node) const {
+        if (node == nullptr){
+            return;   // base case
+        }
+        Visit(node);                   // process current node
+        TraverseRecursive(node->next); // recursive call on the rest of nodes
+    }
+
+    /*
+    Example: 10 → 20 → 30 → 40 → nullptr
+    TraverseReverseRecursive(head):
+
+    Call 1: node = 10 → not nullptr → recurse on 20
+    Call 2: node = 20 → not nullptr → recurse on 30
+    Call 3: node = 30 → not nullptr → recurse on 40
+    Call 4: node = 40 → not nullptr → recurse on nullptr
+    Call 5: node = nullptr → base case hit → return immediately
+
+    Unwinding:
+    Return to node = 40 → print 40
+    Return to node = 30 → print 30
+    Return to node = 20 → print 20
+    Return to node = 10 → print 10
+
+    Output:
+    40 30 20 10
+    */
+    void TraverseReverseRecursive(SinglyLinkedNode* node) const {
+        if (node == nullptr){
+             return;   // base case
+        }
+        TraverseReverseRecursive(node->next); // recursive call on the rest of the nodes
+        Visit(node);                          // process the node
+    }
+
+    /*
+    SearchRecursiveHelper(node, target):
+
+    Base case A: node == nullptr  → not found  → return false
+    Base case B: node->data == target → found → return true
+    Recursive case: search the rest of the list
+                    return SearchRecursiveHelper(node->next, target)
+    */
+    bool SearchRecursiveHelper(SinglyLinkedNode* node, int target) const {
+        if (node == nullptr) return false;        // base case: not found
+        if (node->data == target) return true;    // base case: found
+        return SearchRecursiveHelper(node->next, target); // recurse further
+    }
+
+    // Visit = print node data
+    void Visit(SinglyLinkedNode* node) const {
+        std::cout << node->data << " ";
+    }
+
+public:
+    // Constructor initializes list to empty
+    SinglyLinkedList() : head(nullptr), tail(nullptr) {}
+ 
+    // Append in O(1) using tail
+    void Append(int val) {
+        SinglyLinkedNode* newNode = new SinglyLinkedNode(val);
+        if (head == nullptr) {   // empty list
+            head = newNode;
+            tail = newNode;
+        } else {                 // add to tail
+            tail->next = newNode;
+            tail = newNode;
+        }
+    }
+
+    
+    //destructor
+    ~SinglyLinkedList() {
+    SinglyLinkedNode* cur = head;
+    while (cur != nullptr) {
+        SinglyLinkedNode* nextNode = cur->next;
+        delete cur;
+        cur = nextNode;
+    }
+    head = nullptr;
+    tail = nullptr;
+    }
+
+
+    //Public Wrapper Functions 
+    void Traverse() const {
+        TraverseRecursive(head);
+    }
+
+    void TraverseReverse() const {
+        TraverseReverseRecursive(head);
+    }
+
+    bool SearchRecursive(int target) const {
+        return SearchRecursiveHelper(head, target);
+    }
+
+    
+};
+
+
+int main() {
+    SinglyLinkedList* list = new SinglyLinkedList();
+
+    // Build list: 10 → 20 → 30 → 40
+    list->Append(10);
+    list->Append(20);
+    list->Append(30);
+    list->Append(40);
+
+    cout << "Recursive traversal (head -> tail): ";
+    list->Traverse();
+    cout << endl;
+
+    cout << "Recursive reverse traversal (tail -> head): ";
+    list->TraverseReverse();
+    cout << endl;
+
+    // Test recursive search
+    cout << "Search 30: " << (list->SearchRecursive(30) ? "Found" : "Not Found") << endl;
+    cout << "Search 99: " << (list->SearchRecursive(99) ? "Found" : "Not Found") << endl;
+
+    delete list;  // destructor clears memory
+    return 0;
+}
