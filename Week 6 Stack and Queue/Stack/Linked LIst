@@ -1,0 +1,114 @@
+#include <iostream>
+using namespace std;
+
+
+// Node Class
+
+class Node {
+public:
+    int data;
+    Node* next;
+
+    Node(int value) : data(value), next(nullptr) {}
+};
+
+// LinkedList Class
+
+class LinkedList {
+private:
+    Node* head;  // Points to the first node
+
+public:
+    LinkedList() : head(nullptr) {}
+
+    // Add a new node to the front of the list
+    void prepend(int value) {
+        Node* newNode = new Node(value);
+        newNode->next = head;
+        head = newNode;
+    }
+
+    // Remove the front node
+    void removeFront() {
+        if (head == nullptr) {
+            cout << "List is empty. Nothing to remove.\n";
+            return;
+        }
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+    }
+
+    // Return the value at the front of the list
+    int getFront() const {
+        if (head == nullptr) {
+            cout << "List is empty.\n";
+            return -1;
+        }
+        return head->data;
+    }
+
+    // Check if the list is empty
+    bool isEmpty() const {
+        return head == nullptr;
+    }
+};
+
+
+//Stack Class (Wrapper Around LinkedList)
+
+class Stack {
+private:
+    LinkedList list;  // ENCAPSULATION Principle. The stack contains a linked list as a private member no code 
+                      // outside the stack can call any of of the LL functions
+
+public:
+    // Push = add to the front of the list
+    void push(int value) {
+        list.prepend(value);
+    }
+
+    // Pop = remove from the front of the list
+    void pop() {
+        list.removeFront();
+    }
+
+    // Top = look at the front of the list
+    int top() const {
+        return list.getFront();
+    }
+
+    // Check if stack is empty
+    bool isEmpty() const {
+        return list.isEmpty();
+    }
+};
+
+
+// Demonstration in main()
+
+int main() {
+    Stack s;
+
+    cout << "Pushing 10, 20, 30 onto the stack...\n";
+    s.push(10);  // calls LinkedList::prepend()
+    s.push(20);
+    s.push(30);
+
+    cout << "Top element: " << s.top() << endl;
+
+    cout << "Popping one element...\n";
+    s.pop();     // calls LinkedList::removeFront()
+    cout << "Top element now: " << s.top() << endl;
+
+    cout << "Popping all elements...\n";
+    s.pop();
+    s.pop();
+
+    //ternary conditional operator to shorten code: 
+    //(condition) ? expression_if_true : expression_if_false;
+
+    cout << "Stack empty? " << (s.isEmpty() ? "Yes" : "No") << endl;
+
+    return 0;
+}
