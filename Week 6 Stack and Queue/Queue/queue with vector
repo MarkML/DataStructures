@@ -1,0 +1,88 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class VectorQueue {
+private:
+    vector<int> data;  // stores queue elements
+    int frontIndex;    // points to the current front of the queue
+
+public:
+    // Constructor
+    VectorQueue() : frontIndex(0) {}
+
+    // Enqueue operation - add item to the back
+    void enqueue(int item) {
+        data.push_back(item);
+        cout << "Enqueued: " << item << endl;
+    }
+
+    // Dequeue operation - remove item from the front
+    int dequeue() {
+        if (isEmpty()) {
+            cout << "Error: Queue is empty!" << endl;
+            return -1;
+        }
+
+        int dequeuedValue = data[frontIndex];
+        frontIndex++;
+
+        return dequeuedValue;
+    }
+
+    // Peek at the front element
+    int front() {
+        if (isEmpty()) {
+            cout << "Error: Queue is empty!" << endl;
+            return -1;
+        }
+        return data[frontIndex];
+    }
+
+    // Check if the queue is empty
+    bool isEmpty() {
+        return frontIndex >= data.size();
+    }
+
+    // Print all elements in the queue
+    void printQueue() {
+        cout << "Queue: ";
+        for (int i = frontIndex; i < data.size(); ++i) {
+            cout << data[i] << " ";
+        }
+        cout << endl;
+    }
+
+    // Return number of elements
+    int size() {
+        return data.size() - frontIndex;
+    }
+};
+
+
+int main() {
+    VectorQueue queue;
+
+    // Enqueue some elements
+    queue.enqueue(10);
+    queue.enqueue(20);
+    queue.enqueue(30);
+    queue.enqueue(40);
+
+    // Print queue
+    queue.printQueue(); // Output: Queue: 10 20 30 40
+
+    // Dequeue elements
+    cout << "Dequeued: " << queue.dequeue() << endl; // Output: Dequeued: 10
+    cout << "Dequeued: " << queue.dequeue() << endl; // Output: Dequeued: 20
+
+    // Print queue after dequeues
+    queue.printQueue(); // Output: Queue: 30 40
+
+    // Check the front
+    cout << "Front element: " << queue.front() << endl; // Output: 30
+
+    cout << "Queue size: " << queue.size() << endl;
+
+    return 0;
+}
