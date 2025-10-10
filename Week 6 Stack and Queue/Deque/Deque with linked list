@@ -1,0 +1,130 @@
+#include <iostream>
+using namespace std;
+
+// Node class for the Deque
+class Node {
+public:
+    int data;
+    Node* next;
+    Node* prev;
+
+
+    Node(int dataValue) : data(dataValue), next(nullptr), prev(nullptr) {}
+};
+
+// Deque class definition
+class Deque {
+private:
+    Node* front;
+    Node* rear;
+
+public:
+    Deque() : front(nullptr), rear(nullptr) {}
+
+    bool isEmpty() const { return front == nullptr; }
+
+    // Insert at front
+    void PushFront(int value) {
+        Node* newNode = new Node(value); 
+
+        if (isEmpty()) {
+            front = rear = newNode;
+        } else {
+            newNode->next = front; // Link new node's next to old front
+            front->prev = newNode; // Link old front's prev back to new node
+            front = newNode;       // Update front pointer
+        }
+    }    
+
+    // Insert at rear 
+    void PushBack(int value) { 
+        Node* newNode = new Node(value);
+
+        if (isEmpty()) {
+            front = rear = newNode;
+        } else {
+             rear->next = newNode; // Link old rear's next to new node
+             newNode->prev = rear; // Link new node's prev to old rear
+             rear = newNode;        // Update rear pointer  
+        }
+    }
+ 
+   
+    void PopFront() {
+        if (isEmpty()) {
+            cout << "Deque is empty!" << endl;
+            return;
+        }
+        
+        Node* temp = front;
+        front = front->next;
+        
+        if (front == nullptr)
+            rear = nullptr;
+        else
+            front->prev = nullptr;
+        
+        delete temp;
+    }
+    
+    void PopBack() {
+        if (isEmpty()) {
+            cout << "Deque is empty!" << endl;
+            return;
+        }
+        
+        Node* temp = rear;
+        rear = rear->prev;
+        
+        if (rear == nullptr)
+            front = nullptr;
+        else
+            rear->next = nullptr;
+        
+        delete temp;
+    }
+    
+    void PrintQueue() const {
+        Node* current = front;
+        cout << "Deque contents (front => rear): ";
+        while (current != nullptr) {
+            cout << current->data << " ";
+            current = current->next;
+        }
+        cout << endl;
+    }
+    
+
+    ~Deque() {
+        while (!isEmpty()) {
+            PopFront();
+        }
+    }
+};
+
+int main() {
+ Deque dq;
+
+ cout << "Inserting at rear: 10, 20, 30" << endl;
+ dq.PushBack(10);
+ dq.PushBack(20);
+ dq.PushBack(30);
+ dq.PrintQueue(); // Expected: 10 20 30 
+// Output with Deque contents (front => rear): 10 20 30 
+
+ cout << "Inserting at front: 5" << endl;
+ dq.PushFront(5);
+ dq.PrintQueue(); // Expected: 5 10 20 30 
+// Output with Deque contents (front => rear): 5 10 20 30 
+
+ cout << "Deleting from rear" << endl; dq.PopBack();
+ dq.PrintQueue(); // Expected: 5 10 20
+// Output with Deque contents (front => rear): 5 10 20
+
+ cout << "Deleting from front" << endl;
+ dq.PopFront();
+ dq.PrintQueue(); // Expected: 10 20
+// Output with Deque contents (front => rear): 10 20
+
+ return 0;
+}
