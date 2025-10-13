@@ -1,0 +1,122 @@
+#include <iostream>
+#include <string>
+#include <vector> //provides dynamic array (resizable) for storing buckets
+#include <list>   //doubly linked list holding Node struct of our data 
+#include <utility> //Provides pair object to store key-value pair
+#include <functional> // Provides hash<string> for computing hash codes of string keys
+using namespace std;
+
+
+//Simple Hash Table with Chaining
+
+class ChainingHashTable {
+private:
+    static const int BUCKET_COUNT = 7;   //static keyword make every instance of hash table have the same bucket count of 7
+    vector<list<pair<string, string>>> buckets;
+
+    // Hash function: Take the hash of key, reduce it so it fits in my bucket range, and store that small number as the index where this key belongs.”
+    int HashFunction(string key) {
+        hash<string> hasher;
+        int index = (int)(hasher(key) % BUCKET_COUNT);
+        return index;
+    }
+
+public:
+    ChainingHashTable() {
+        buckets.resize(BUCKET_COUNT);
+    }
+
+    // Insert a new key-value pair
+    void Insert(string key, string value) {
+        int index = HashFunction(key);
+
+        // Check if key already exists
+        for (auto& kv : buckets[index]) {
+            if (kv.first == key) {
+                kv.second = value; // update existing
+                return;
+            }
+        }
+        // Add new pair
+        buckets[index].push_back({key, value});
+    }
+
+    // Remove a key if it exists
+    void Remove(string key) {
+        int index = HashFunction(key);
+        for (auto it = buckets[index].begin(); it != buckets[index].end(); ++it) {
+            if (it->first == key) {
+                buckets[index].erase(it);
+                return;
+            }
+        }
+    }
+
+    // Find a key and return true/false, storing value in outValue
+    bool Find(string key, string& outValue) {
+        int index = HashFunction(key);
+        for (auto& kv : buckets[index]) {
+            if (kv.first == key) {
+                outValue = kv.second;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // print the contents of the table
+    void PrintTable() {
+        cout << "=== Hash Table Buckets ===\n";
+        for (int i = 0; i < BUCKET_COUNT; i++) {
+            cout << "Bucket " << i << ": ";
+            for (auto& kv : buckets[i]) {
+                cout << "(" << kv.first << " -> " << kv.second << ") ";
+            }
+            cout << endl;
+        }
+    }
+};
+
+
+int main() {
+    vector<string> titles = {
+        "1984", "Dune", "The Hobbit",
+        "Moby Dick", "Frankenstein", "Pride and Prejudice",
+        "Hamlet", "The Odyssey", "The Catcher in the Rye",
+        "To Kill a Mockingbird"
+    };
+
+    vector<string> authors = {
+        "George Orwell", "Frank Herbert", "J.R.R. Tolkien",
+        "Herman Melville", "Mary Shelley", "Jane Austen",
+        "William Shakespeare", "Homer", "J.D. Salinger",
+        "Harper Lee"
+    };
+
+    ChainingHashTable library;
+
+    cout << "Inserting books into hash table...\n";
+    for (int i = 0; i < (int)titles.size(); i++) {
+        library.Insert(titles[i], authors[i]);
+    }
+
+    library.PrintTable();
+
+    cout << "\nFinding some books...\n";
+    vector<string> searchKeys = {"Dune", "The Hobbit", "The Great Gatsby"};
+    for (int i = 0; i < (int)searchKeys.size(); i++) {
+        string author;
+        if (library.Find(searchKeys[i], author))
+            cout << searchKeys[i] << " -> " << author << endl;
+        else
+            cout << searchKeys[i] << " not found.\n";
+    }
+
+    cout << "\nRemoving two books...\n";
+    library.Remove("1984");
+    library.Remove("Moby Dick");
+
+    library.PrintTable();
+
+    return 0;
+}
