@@ -1,0 +1,149 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+
+//Iterative Search
+// Define the Node structure for BST
+class BSTNode {
+public:
+    int key;       // Value of the node
+    BSTNode* left;    // Pointer to the left child
+    BSTNode* right;   // Pointer to the right child
+
+    // Constructor to create a new node
+    BSTNode(int nodeKey) : key(nodeKey), left(nullptr), right(nullptr) {}
+};
+
+// Define the BST class with the iterative search function
+class BinarySearchTree {
+private:
+    BSTNode* root; // Root of the BST
+
+    //helper function to delete all tree nodes
+    void DeleteTree(BSTNode* subtreeRoot) {
+        if (subtreeRoot) {
+            DeleteTree(subtreeRoot->left);
+            DeleteTree(subtreeRoot->right);
+            delete subtreeRoot;
+        }
+    }
+    
+public:
+    // Constructor initializes an empty BST
+    BinarySearchTree() : root(nullptr) {}
+    
+    ~BinarySearchTree() { 
+        DeleteTree(root);
+    }
+    
+    // Insert a node iteratively in the tree
+    void InsertNode(BSTNode* newNode) {
+        if (root == nullptr) {
+            root = newNode;
+        }
+        else {
+            BSTNode* currentNode = root;
+            while (currentNode) {
+                if (newNode->key < currentNode->key) {
+                    if (currentNode->left == nullptr) {
+                        currentNode->left = newNode;
+                        currentNode = nullptr;
+                    }
+                    else {
+                        currentNode = currentNode->left;
+                    }
+                }
+                else {
+                    if (currentNode->right == nullptr) {
+                        currentNode->right = newNode;
+                        currentNode = nullptr;
+                    }
+                    else {
+                        currentNode = currentNode->right;
+                    }          
+                }
+            }
+        }
+    }
+
+    void PrintInorder() {
+    if (root == nullptr) {
+        cout << "Tree is empty." << endl;
+        return;
+    }
+
+    stack<BSTNode*> nodeStack;
+    BSTNode* current = root;
+
+    cout << "Iterative Inorder Traversal: ";
+
+    while (current != nullptr || !nodeStack.empty()) {
+        // 1. Go as far left as possible
+        while (current != nullptr) {
+            nodeStack.push(current);
+            current = current->left;
+        }
+
+        // 2. Visit the top node
+        current = nodeStack.top();
+        nodeStack.pop();
+        cout << current->key << " ";
+
+        // 3. Move to the right subtree
+        current = current->right;
+    }
+
+    cout << endl;
+    }
+    
+    // Iterative search function for a key, node by node in the tree
+    BSTNode* Search(int SearchKey) {
+        BSTNode* currentNode = root; // Start the search from the root
+        
+        // Continue searching until cur is NULL
+        while (currentNode) {
+            if (SearchKey == currentNode->key) {
+                // Key is found, return the current node
+                return currentNode;
+            } else if (SearchKey < currentNode->key) {
+                // If key is less than currentNode's key, go left
+                currentNode = currentNode->left;
+            } else {
+                // If key is greater than cur's key, go right
+                currentNode = currentNode->right;
+            }
+        }
+        // Key was not found in the tree
+        return nullptr;
+    }
+};
+
+int main() {
+    BinarySearchTree bst;
+    BSTNode* n1 = new BSTNode(8);
+    BSTNode* n2 = new BSTNode(3);
+    BSTNode* n3 = new BSTNode(10);
+    BSTNode* n4 = new BSTNode(1);
+    BSTNode* n5 = new BSTNode(6);
+    BSTNode* n6 = new BSTNode(14);
+    BSTNode* n7 = new BSTNode(4);
+    BSTNode* n8 = new BSTNode(7);
+    BSTNode* n9 = new BSTNode(13);
+
+    // Insert nodes into the BST
+    bst.InsertNode(n1);
+    bst.InsertNode(n2);
+    bst.InsertNode(n3);
+    bst.InsertNode(n4);
+    bst.InsertNode(n5);
+    bst.InsertNode(n6);
+    bst.InsertNode(n7);
+    bst.InsertNode(n8);
+    bst.InsertNode(n9);
+    
+    //Print the tree content 
+    bst.PrintInorder();
+    bst.Search(100) ? cout << "key found in tree" : cout << "key NOT found";
+    return 0;
+}
+
