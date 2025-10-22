@@ -1,0 +1,229 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+
+//Iterative Insert node into tree
+// Define the Node structure for BST
+class BSTNode {
+public:
+    int key;       // Value of the node
+    BSTNode* left;    // Pointer to the left child
+    BSTNode* right;   // Pointer to the right child
+
+    // Constructor to create a new node
+    BSTNode(int nodeKey) : key(nodeKey), left(nullptr), right(nullptr) {}
+};
+
+// Define the BST class with the iterative search function
+class BinarySearchTree {
+private:
+    BSTNode* root; // Root of the BST
+
+    //helper function to delete all tree nodes
+    void DeleteTree(BSTNode* subtreeRoot) {
+        if (subtreeRoot) {
+            DeleteTree(subtreeRoot->left);
+            DeleteTree(subtreeRoot->right);
+            delete subtreeRoot;
+        }
+    }
+    
+public:
+    // Constructor initializes an empty BST
+    BinarySearchTree() : root(nullptr) {}
+    
+    ~BinarySearchTree() { 
+        DeleteTree(root);
+    }
+    
+    // Insert a node iteratively in the tree
+    void InsertNode(BSTNode* newNode) {
+        if (root == nullptr) {
+            root = newNode;
+        }
+        else {
+            BSTNode* currentNode = root;
+            while (currentNode) {
+                if (newNode->key < currentNode->key) {
+                    if (currentNode->left == nullptr) {
+                        currentNode->left = newNode;
+                        currentNode = nullptr;
+                    }
+                    else {
+                        currentNode = currentNode->left;
+                    }
+                }
+                else {
+                    if (currentNode->right == nullptr) {
+                        currentNode->right = newNode;
+                        currentNode = nullptr;
+                    }
+                    else {
+                        currentNode = currentNode->right;
+                    }          
+                }
+            }
+        }
+    }
+
+    void printInorder() {
+    if (root == nullptr) {
+        cout << "Tree is empty." << endl;
+        return;
+    }
+
+    stack<BSTNode*> nodeStack;
+    BSTNode* current = root;
+
+    cout << "Iterative Inorder Traversal: ";
+
+    while (current != nullptr || !nodeStack.empty()) {
+        // 1. Go as far left as possible
+        while (current != nullptr) {
+            nodeStack.push(current);
+            current = current->left;
+        }
+
+        // 2. Visit the top node
+        current = nodeStack.top();
+        nodeStack.pop();
+        cout << current->key << " ";
+
+        // 3. Move to the right subtree
+        current = current->right;
+    }
+
+    cout << endl;
+    }
+    
+    bool Remove(int key) {
+       BSTNode* parent = nullptr;
+       BSTNode* currentNode = root;
+    
+       // Search for the node
+       while (currentNode) {
+          // Check if currentNode has a matching key
+          if (currentNode->key == key) {
+             if (currentNode->left == nullptr && currentNode->right == nullptr) {
+                // Remove leaf
+                   
+                if (parent == nullptr) { // Node is root
+                   root = nullptr;
+                }
+                else if (parent->left == currentNode) { 
+                   parent->left = nullptr;
+                }
+                else {
+                   parent->right = nullptr;
+                }
+                delete currentNode;
+                return true; // Node found and removed
+             }
+             else if (currentNode->left && currentNode->right == nullptr) {
+                // Remove node with only left child
+                   
+                if (parent == nullptr) { // Node is root
+                   root = currentNode->left;
+                }
+                else if (parent->left == currentNode) {
+                   parent->left = currentNode->left;
+                }
+                else {
+                   parent->right = currentNode->left;
+                }
+                delete currentNode;
+                return true; // Node found and removed
+             }
+             else if (currentNode->left == nullptr && currentNode->right) {
+                // Remove node with only right child
+                   
+                if (parent == nullptr) { // Node is root
+                   root = currentNode->right;
+                }
+                else if (parent->left == currentNode) {
+                   parent->left = currentNode->right;
+                }
+                else {
+                   parent->right = currentNode->right;
+                }
+                delete currentNode;
+                return true; // Node found and removed
+             }
+             else {
+                // Remove node with two children
+                   
+                // Find successor (leftmost child of right subtree)
+                BSTNode* successor = currentNode->right;
+                while (successor->left) {
+                   successor = successor->left;
+                }
+                currentNode->key = successor->key; // Copy successor's key to current node
+                parent = currentNode;
+                   
+                // Reassign currentNode and key so that loop continues with new key
+                currentNode = currentNode->right;
+                key = successor->key;
+             }
+          }
+          else if (currentNode->key < key) {
+             // Search right
+                
+             parent = currentNode;
+             currentNode = currentNode->right;
+          }
+          else {
+             // Search left
+                
+             parent = currentNode;
+             currentNode = currentNode->left;
+          }
+       }
+       return false; // Node not found
+    }
+
+};
+
+int main() {
+    BinarySearchTree bst;
+    bst.InsertNode(new BSTNode(10));
+    bst.InsertNode(new BSTNode(5));
+    bst.InsertNode(new BSTNode(15));
+    bst.InsertNode(new BSTNode(3));
+    bst.InsertNode(new BSTNode(6));
+    bst.InsertNode(new BSTNode(14));
+    bst.InsertNode(new BSTNode(4));
+    bst.InsertNode(new BSTNode(7));
+    bst.InsertNode(new BSTNode(13));
+    
+    //Print the tree content 
+    cout << "Initial (inorder): ";
+    bst.printInorder();  // Expect: 3 4 5 6 7 10 13 14 15
+
+    // 1) Remove a LEAF
+    cout << "\nRemove 7 (leaf) -> " << (bst.Remove(7) ? "OK" : "FAIL") << '\n';
+    cout << "After: "; bst.printInorder(); // Expect: 3 4 5 6 10 13 14 15
+
+    // 2) Remove ONE-CHILD node (3 has right child 4)
+    cout << "\nRemove 3 (one child) -> " << (bst.Remove(3) ? "OK" : "FAIL") << '\n';
+    cout << "After: "; bst.printInorder(); // Expect: 4 5 6 10 13 14 15
+
+    // 3) Remove TWO-CHILDREN node (5 has 4,6)
+    cout << "\nRemove 5 (two children) -> " << (bst.Remove(5) ? "OK" : "FAIL") << '\n';
+    cout << "After: "; bst.printInorder(); // Expect: 4 6 10 13 14 15
+
+    // 4) Remove ROOT (10 has two children)
+    cout << "\nRemove 10 (root, two children) -> " << (bst.Remove(10) ? "OK" : "FAIL") << '\n';
+    cout << "After: "; bst.printInorder(); // Expect: 4 6 13 14 15
+
+    // 5) Remove MISSING key
+    cout << "\nRemove 999 (missing) -> " << (bst.Remove(999) ? "OK" : "FAIL") << '\n';
+    cout << "After: "; bst.printInorder(); // Expect unchanged: 4 6 13 14 15
+
+    // 6) Drain remaining nodes to empty
+    int toRemove[] = {4, 6, 13, 14, 15};
+    for (int k : toRemove) {
+        cout << "Remove " << k << " -> " << (bst.Remove(k) ? "OK" : "FAIL") << '\n';
+        cout << "After: "; bst.printInorder();
+    }
+    return 0;
+}
