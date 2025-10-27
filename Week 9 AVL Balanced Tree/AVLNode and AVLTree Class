@@ -1,0 +1,204 @@
+// AVLTreeRecursiveDemo
+
+#include <iostream>
+using namespace std;
+
+class AVLNode {
+private:
+    int key;           // The integer value (key) stored in this node
+    int height;        // The height of this node (distance to farthest leaf)
+    AVLNode* left;     // Pointer to left child
+    AVLNode* right;    // Pointer to right child
+    AVLNode* parent;   // Pointer to parent node
+
+public:
+    // Constructor
+    // Initializes a new node with the given key and null pointers.
+    AVLNode(int k)
+        : key(k), height(0), left(nullptr), right(nullptr), parent(nullptr) {}
+
+
+    //GETTERS
+
+
+    // Returns the integer key stored in this node.
+    int GetKey() const { 
+        return key; 
+    }
+
+    // Returns the height of this node.
+    // The height represents the number of edges on the longest path
+    // from this node down to a leaf.
+    int GetHeight() const { 
+        return height; 
+    }
+
+    // Returns a pointer to the left child of this node.
+    // If there is no left child, returns nullptr.
+    AVLNode* GetLeft() const { 
+        return left; 
+    }
+
+    // Returns a pointer to the right child of this node.
+    // If there is no right child, returns nullptr.
+    AVLNode* GetRight() const { 
+        return right; 
+    }
+
+    // Returns a pointer to this node’s parent.
+    // This is useful for updating ancestor heights after insertions.
+    AVLNode* GetParent() const { 
+        return parent; 
+    }
+
+
+    //SETTERS
+
+
+    // Sets the parent pointer of this node.
+    // Does not modify the parent's children; only this node’s reference.
+    void SetParent(AVLNode* p) { 
+        parent = p; 
+    }
+
+    // Sets the left child pointer to point to a new node.
+    // If the new node is not null, its parent pointer is updated
+    // to point back to the current node.
+    // Finally, this node’s height is recalculated to maintain correctness.
+    void SetLeft(AVLNode* node) {
+        left = node;
+        if (node) node->parent = this;
+        UpdateHeight();
+    }
+
+    // Sets the right child pointer to point to a new node.
+    // If the new node is not null, its parent pointer is updated
+    // to point back to the current node.
+    // Finally, this node’s height is recalculated to maintain correctness.
+    void SetRight(AVLNode* node) {
+        right = node;
+        if (node) node->parent = this;
+        UpdateHeight();
+    }
+
+    
+    //     FIND HEIGHT AND BALANCE
+ 
+
+    // Recalculates the height of this node based on its children.
+    // The height is 1 more than the maximum height of its two subtrees.
+    void UpdateHeight() {
+        int lh = (left  ? left->height  : -1);
+        int rh = (right ? right->height : -1);
+        height = (lh > rh ? lh : rh) + 1;
+    }
+
+    // Computes the balance factor of this node.
+    // Balance Factor = height(left subtree) - height(right subtree)
+    // A perfectly balanced node has balance = 0.
+    // Positive means left-heavy, negative means right-heavy.
+    int GetBalance() const {
+        int lh = (left  ? left->height  : -1);
+        int rh = (right ? right->height : -1);
+        return lh - rh;
+    }
+};
+
+class AVLTree {
+private:
+    AVLNode* root;  // Pointer to the root node of the tree
+
+    // Recursively deletes all nodes in post-order traversal.
+    // This ensures child nodes are deleted before their parent.
+    void DeleteTree(AVLNode* subtreeRoot) {
+        if (subtreeRoot) {
+            DeleteTree(subtreeRoot->GetLeft());
+            DeleteTree(subtreeRoot->GetRight());
+            delete subtreeRoot;
+        }
+    }
+
+    // Recursive BST-style insertion.
+    // Returns a pointer to the new (or unchanged) subtree root.
+    AVLNode* InsertRec(AVLNode* node, int key) {
+        // Base case: empty position found, create a new node
+        if (!node) {
+            return new AVLNode(key);
+        }
+
+        // Recur down the tree according to BST ordering
+        if (key < node->GetKey()) {
+            AVLNode* leftChild = InsertRec(node->GetLeft(), key);
+            node->SetLeft(leftChild);
+        } 
+        else if (key > node->GetKey()) {
+            AVLNode* rightChild = InsertRec(node->GetRight(), key);
+            node->SetRight(rightChild);
+        }
+        // Duplicate keys are ignored
+
+        // Update height before returning to parent
+        node->UpdateHeight();
+        return node;
+    }
+
+    // Helper function to print nodes in sorted order (in-order traversal)
+    void PrintInOrderRec(AVLNode* node) const {
+        if (!node) return;
+        PrintInOrderRec(node->GetLeft());
+        cout << node->GetKey()
+             << "(h=" << node->GetHeight()
+             << ", bf=" << node->GetBalance() << ") ";
+        PrintInOrderRec(node->GetRight());
+    }
+
+public:
+    // Constructor initializes an empty tree
+    AVLTree() : root(nullptr) {}
+
+    // Destructor calls recursive DeleteTree() to free memory
+    ~AVLTree() { 
+        DeleteTree(root); 
+    }
+
+    // Returns a pointer to the root of the tree
+    AVLNode* GetRoot() const { 
+        return root; 
+    }
+
+    // Public interface for insertion
+    // Calls recursive helper function starting from root.
+    void Insert(int key) {
+        root = InsertRec(root, key);
+    }
+
+    // Public interface to print tree contents in sorted order
+    // Also displays each node’s height and balance factor.
+    void PrintInOrder() const {
+        PrintInOrderRec(root);
+        cout << "\n";
+    }
+};
+
+int main() {
+    AVLTree tree;
+
+    // Insert some nodes (BST behavior)
+    tree.Insert(3);
+    tree.Insert(2);
+    tree.Insert(4);
+    tree.Insert(1);
+    tree.Insert(5);
+
+    cout << "In-order traversal (key, height, balance):\n";
+    tree.PrintInOrder();
+
+    // Print root details
+    if (auto* r = tree.GetRoot()) {
+        cout << "Root: " << r->GetKey()
+             << " | Height: " << r->GetHeight()
+             << " | Balance: " << r->GetBalance() << "\n";
+    }
+
+    return 0;
+}
