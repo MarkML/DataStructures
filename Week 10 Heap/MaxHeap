@@ -1,0 +1,47 @@
+#include <iostream>
+using namespace std;
+
+class MaxHeap {
+private:
+   int* heapArray;
+   int allocationSize;
+   int heapSize;
+    
+   void ResizeArray() {
+      int newAllocationSize = allocationSize * 2;
+      int* newArray = new int[newAllocationSize];
+      if (newArray) {
+         // Copy from existing array to new array
+         for (int i = 0; i < heapSize; i++) {
+            newArray[i] = heapArray[i];
+         }
+         
+         // Delete old array and set pointer to new
+         delete[] heapArray;
+         heapArray = newArray;
+            
+         // Update allocation size
+         allocationSize = newAllocationSize;
+      }
+   }
+
+public:
+   MaxHeap() {
+      allocationSize = 1;
+      heapArray = new int[allocationSize];
+      heapSize = 0;
+   }
+    
+   ~MaxHeap() {
+      delete[] heapArray;
+   }
+   
+   
+};
+
+int main(){
+    
+    MaxHeap* myMaxHeap =  new MaxHeap();
+    myMaxHeap ? cout << "myMaxHeap is created" : cout << "error!";
+    
+}
