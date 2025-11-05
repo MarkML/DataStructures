@@ -1,0 +1,171 @@
+
+#include <iostream>
+using namespace std;
+
+class MaxHeap {
+public:
+   int* heapArray;
+   int allocationSize;
+   int heapSize;
+    
+   void ResizeArray() {
+      int newAllocationSize = allocationSize * 2;
+      int* newArray = new int[newAllocationSize];
+      if (newArray) {
+         // Copy from existing array to new array
+         for (int i = 0; i < allocationSize; i++) {
+            newArray[i] = heapArray[i];
+         }
+         
+         // Delete old array and set pointer to new
+         delete[] heapArray;
+         heapArray = newArray;
+            
+         // Update allocation size
+         allocationSize = newAllocationSize;
+      }
+   }
+
+  //constructor
+   MaxHeap() {
+      allocationSize = 1;
+      heapArray = new int[allocationSize];
+      heapSize = 0;
+   }
+   //destructor    
+   ~MaxHeap() {
+      delete[] heapArray;
+   }
+
+   
+   // PercolateUp 
+   void PercolateUp(int nodeIndex) {
+      while (nodeIndex > 0) {
+         // Compute the parent node's index
+         int parentIndex = (nodeIndex - 1) / 2;
+            
+         // Check for a violation of the max-heap property
+         if (heapArray[nodeIndex] <= heapArray[parentIndex]) {
+            // No violation, so percolate up is done
+            return;
+         }
+         else {
+            // Swap heapArray[nodeIndex] and heapArray[parentIndex]
+            int temp = heapArray[nodeIndex];
+            heapArray[nodeIndex] = heapArray[parentIndex];
+            heapArray[parentIndex] = temp;
+                        
+            // Continue the loop from the parent node
+            nodeIndex = parentIndex;
+         }
+      }
+   }
+
+  
+   // PercolateDown (as provided)
+   void PercolateDown(int nodeIndex) {
+      int childIndex = 2 * nodeIndex + 1;
+      int value = heapArray[nodeIndex];
+
+      while (childIndex < heapSize) {
+         // Find the max among the node and all the node's children
+         int maxValue = value;
+         int maxIndex = -1;
+         for (int i = 0; i < 2 && i + childIndex < heapSize; i++) {
+            if (heapArray[i + childIndex] > maxValue) {
+               maxValue = heapArray[i + childIndex];
+               maxIndex = i + childIndex;
+            }
+         }
+
+         // Check for a violation of the max-heap property
+         if (maxValue == value) {
+            return;
+         }
+         else {
+            // Swap heapArray[nodeIndex] and heapArray[maxIndex]
+            int temp = heapArray[nodeIndex];
+            heapArray[nodeIndex] = heapArray[maxIndex];
+            heapArray[maxIndex] = temp;
+                        
+            // Continue loop from the max index node
+            nodeIndex = maxIndex;
+            childIndex = 2 * nodeIndex + 1;
+         }
+      }
+   }
+
+  
+   // Insert element into Heap
+   void Insert(int value) {
+      // Resize if needed
+      if (heapSize == allocationSize) {
+         ResizeArray();
+      }
+         
+      // Add the new value to the end of the array
+      heapArray[heapSize] = value;
+      heapSize++;
+           
+      // Percolate up from the last index to restore heap property
+      PercolateUp(heapSize - 1);
+   }
+
+  
+   // Remove root element which is the Max value of the Heap
+   int Remove() {
+      // Save the max value from the root of the heap
+      int maxValue = heapArray[0];
+           
+      // Move the last item in the array into index 0
+      int replaceValue = heapArray[heapSize - 1];
+      heapSize--;
+      if (heapSize > 0) {
+         heapArray[0] = replaceValue;
+
+         // Percolate down to restore max-heap property
+         PercolateDown(0);
+      }
+                   
+      // Return the max value
+      return maxValue;
+   }
+
+};
+
+
+
+int main() {
+   MaxHeap heap;
+
+   // Test Insert()
+   cout << "Inserting values: 50, 30, 20, 40, 70, 60, 80" << endl;
+   heap.Insert(50);
+   heap.Insert(30);
+   heap.Insert(20);
+   heap.Insert(40);
+   heap.Insert(70);
+   heap.Insert(60);
+   heap.Insert(80);
+
+   cout << "Heap after inserts (internal array order): ";
+   // Access internal structure for demonstration
+   // (This relies on understanding that valid elements are heapArray[0..heapSize-1])
+   for (int i = 0; i < 7; i++) {
+      cout << heap.heapArray[i] << " ";
+   }
+   cout << endl;
+
+   // Test Remove()
+   cout << "\nRemoving values (should come out in descending order): " << endl;
+   while (true) {
+      // Stop when heap is empty
+      if (heap.heapSize == 0) break;
+
+      int removedValue = heap.Remove();
+      cout << "Removed max = " << removedValue << endl;
+   }
+
+   return 0;
+}
+
