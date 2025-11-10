@@ -1,0 +1,85 @@
+//Adjacency matrix
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Graph {
+private:
+    vector<vector<int>> adjMatrix; // 2D matrix
+    int numVertices;
+
+public:
+    Graph(int vertices) : numVertices(vertices) {
+        // Initialize matrix with all zeros
+        adjMatrix = vector<vector<int>>(vertices, vector<int>(vertices, 0));
+    }
+
+    // Add undirected edge u--v
+    void addEdge(int u, int v) {
+        adjMatrix[u][v] = 1;
+        adjMatrix[v][u] = 1;  // because undirected
+    }
+
+    // Print the adjacency matrix
+    void printMatrix() const {
+        cout << "Adjacency Matrix:\n";
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 0; j < numVertices; j++) {
+                cout << adjMatrix[i][j] << " ";
+            }
+            cout << endl;
+        }
+    }
+
+    // 1. Degree of a vertex
+    int degree(int v) const {
+        int count = 0;
+        for (int j = 0; j < numVertices; j++) {
+            if (adjMatrix[v][j] == 1)
+                count++;
+        }
+        return count;
+    }
+
+    // 2. Check if an edge exists between u and v
+    bool hasEdge(int u, int v) const {
+        return adjMatrix[u][v] == 1;
+    }
+};
+
+int main() {
+    int vertices = 5;
+    Graph g(vertices);
+
+    //graph g:
+    // 0 -- 1 -- 2
+    // |         |
+    // 4 --------3
+    g.addEdge(0,1);
+    g.addEdge(1,2);
+    g.addEdge(2,3);
+    g.addEdge(3,4);
+    g.addEdge(4,0);
+
+    g.printMatrix();
+    cout << endl;
+
+    cout << "Degree of vertex 0: " << g.degree(0) << endl;
+    cout << "Degree of vertex 3: " << g.degree(3) << endl;
+    cout << endl;
+
+    int u, v;
+    cout << "Enter two vertices to check for an edge:\n";
+    cin >> u >> v;
+
+    if (u < 0 || u >= vertices || v < 0 || v >= vertices) {
+        cout << "Invalid vertex index.\n";
+        return 0;
+    }
+
+    cout << "Does an edge exist between " << u << " and " << v << "? "
+         << (g.hasEdge(u, v) ? "Yes" : "No") << endl;
+
+    return 0;
+}
