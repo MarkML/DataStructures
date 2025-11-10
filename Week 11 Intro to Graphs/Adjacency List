@@ -27,12 +27,12 @@ public:
         }
     }
 
-    // 1. degree(v)
+    // get degree(v) of a vertex
     int degree(int v) const {
         return adjList[v].size();
     }
 
-    // 2. hasEdge(u, v) — version you asked for
+    // check if there is edge between vertices u and v  
     bool hasEdge(int u, int v) const {
         for (int neighbor : adjList[u]) {
             if (neighbor == v)
