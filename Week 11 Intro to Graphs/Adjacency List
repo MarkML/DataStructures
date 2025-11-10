@@ -1,0 +1,86 @@
+//Undirected Graph using Adjacency List
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class Graph {
+private:
+    vector<vector<int>> adjList;
+
+public:
+    Graph(int vertices) : adjList(vertices) {}
+
+    // Add undirected edge u--v
+    void addEdge(int u, int v) {
+        adjList[u].push_back(v);
+        adjList[v].push_back(u);
+    }
+
+    void printGraph() const {
+        for (int i = 0; i < (int)adjList.size(); ++i) {
+            cout << i << ": ";
+            for (int neighbor : adjList[i]) {
+                cout << neighbor << " ";
+            }
+            cout << endl;
+        }
+    }
+
+    // 1. degree(v)
+    int degree(int v) const {
+        return adjList[v].size();
+    }
+
+    // 2. hasEdge(u, v) — version you asked for
+    bool hasEdge(int u, int v) const {
+        for (int neighbor : adjList[u]) {
+            if (neighbor == v)
+                return true;
+        }
+        return false;
+    }
+};
+
+int main() {
+    int vertices = 5;
+    Graph g(vertices);
+
+    // Build:
+    // 0 -- 1 -- 2
+    // |         |
+    // 4 --------3
+    g.addEdge(0,1);
+    g.addEdge(1,2);
+    g.addEdge(2,3);
+    g.addEdge(3,4);
+    g.addEdge(4,0);
+
+    cout << "Adjacency List:\n";
+    g.printGraph();
+    cout << endl;
+
+    
+    cout << "Degree of vertex 0: " << g.degree(0) << endl;
+    cout << "Degree of vertex 3: " << g.degree(3) << endl;
+    cout << endl;
+
+    // --- USER INPUT SECTION ---
+    int u, v;
+    cout << "Enter two vertices to check if an edge exists between them:\n";
+    cout << "u: ";
+    cin >> u;
+    cout << "v: ";
+    cin >> v;
+
+    if (u < 0 || u >= vertices || v < 0 || v >= vertices) {
+        cout << "Invalid vertex index! Must be between 0 and "
+             << vertices - 1 << "." << endl;
+        return 0;
+    }
+
+    cout << "Does an edge exist between " << u << " and " << v << "? "
+         << (g.hasEdge(u, v) ? "Yes" : "No") << endl;
+
+    return 0;
+}
