@@ -1,0 +1,99 @@
+#include <iostream>
+#include <vector>
+#include <queue>   
+using namespace std;
+
+class Graph {
+private:
+    vector<vector<int>> adjList;  // adjacency list representation
+
+public:
+    // Constructor
+    Graph(int vertices) : adjList(vertices) {}
+
+    // Add undirected edge u--v
+    void addEdge(int u, int v) {
+        adjList[u].push_back(v);
+        adjList[v].push_back(u);
+    }
+
+    // Print adjacency list
+    void printGraph() const {
+        cout << "Adjacency List Representation:\n";
+        for (int i = 0; i < adjList.size(); ++i) {
+            cout << i << ": ";
+            for (int neighbor : adjList[i]) {
+                cout << neighbor << " ";
+            }
+            cout << endl;
+        }
+    }
+
+    // Return degree of a vertex
+    int degree(int v) const {
+        return adjList[v].size();
+    }
+
+    // Check if there is an edge between u and v
+    bool hasEdge(int u, int v) const {
+        for (int neighbor : adjList[u]) {
+            if (neighbor == v)
+                return true;
+        }
+        return false;
+    }
+
+    // Breadth-First Search (BFS) traversal from a given starting vertex
+    void BFS(int startVertex) const {
+        int n = adjList.size();                 // Number of vertices
+        vector<bool> visited(n, false);         // Track visited vertices
+        queue<int> q;                           // Queue for BFS
+
+        visited[startVertex] = true;
+        q.push(startVertex);
+
+        cout << "BFS traversal starting from vertex " << startVertex << ": ";
+
+        while (!q.empty()) {
+            int curr = q.front();
+            q.pop();
+            cout << curr << " ";
+
+            // Visit all neighbors of current vertex
+            for (int neighbor : adjList[curr]) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    q.push(neighbor);
+                }
+            }
+        }
+        cout << endl;
+    }
+};
+
+
+int main() {
+    // Create a graph with n vertices (0 to n-1)
+    Graph g(8);
+
+    // Add undirected edges
+    g.addEdge(1, 5);
+    g.addEdge(1, 3);
+    g.addEdge(1, 4);
+    g.addEdge(3, 6);
+    g.addEdge(0, 1);
+    g.addEdge(0, 5);
+    g.addEdge(7, 4);
+    g.addEdge(1, 2);
+    
+    
+    // Print graph structure
+    g.printGraph();
+
+    // Run BFS from vertex 0
+    g.BFS(3);
+
+    return 0;
+}
+
+
