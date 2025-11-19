@@ -1,0 +1,99 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+class Graph {
+private:
+    vector<vector<int>> adjList;
+
+public:
+    Graph(int vertices) : adjList(vertices) {}
+
+    
+    // Directed edge u -> v
+    void addDirectedEdge(int u, int v) {
+        adjList[u].push_back(v);
+    }
+
+    void printGraph() const {
+        cout << "Adjacency List (Directed):\n";
+        for (int i = 0; i < adjList.size(); ++i) {
+            cout << i << ": ";
+            for (int neighbor : adjList[i]) {
+                cout << neighbor << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
+    }
+
+    // Topological Sort (Kahn's Algorithm)
+    vector<int> topologicalSort() const {
+        int n = adjList.size();
+        vector<int> indegree(n, 0);
+
+        // 1. Compute indegree of each vertex
+        for (int u = 0; u < n; ++u) {
+            for (int v : adjList[u]) {
+                indegree[v]++;
+            }
+        }
+
+        // 2. Queue of vertices with indegree 0
+        queue<int> q;
+        for (int v = 0; v < n; ++v) {
+            if (indegree[v] == 0)
+                q.push(v);
+        }
+
+        // 3. Process queue
+        vector<int> order;
+        while (!q.empty()) {
+            int u = q.front();
+            q.pop();
+            order.push_back(u);
+
+            for (int v : adjList[u]) {
+                indegree[v]--;
+                if (indegree[v] == 0)
+                    q.push(v);
+            }
+        }
+
+        // 4. Cycle check
+        if (order.size() != n) {
+            cout << "Cycle detected! Topological sort not possible.\n";
+        }
+
+        return order;
+    }
+};
+
+int main() {
+    // Create a graph with 6 nodes: 0,1,2,3,4,5
+    Graph g(6);
+
+    // Add directed edges (DAG example)
+    g.addDirectedEdge(5, 2);
+    g.addDirectedEdge(5, 0);
+    g.addDirectedEdge(4, 0);
+    g.addDirectedEdge(4, 1);
+    g.addDirectedEdge(2, 3);
+    g.addDirectedEdge(3, 1);
+
+    // Show the graph
+    g.printGraph();
+
+    // Run Kahn's Topological Sort
+    vector<int> topo = g.topologicalSort();
+
+    // Print result
+    cout << "Topological Sort Order: ";
+    for (int v : topo) {
+        cout << v << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
